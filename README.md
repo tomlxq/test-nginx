@@ -8,8 +8,11 @@ NSSM 全称为：the Non-Sucking Service Manager。
 反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个服务器。 
 反向代理方式实际上就是一台负责转发的代理服务器，貌似充当了真正服务器的功能，但实际上并不是，代理服务器只是充当了转发的作用，并且从真正的服务器那里取得返回的数据。这样说，其实nginx完成的就是这样的工作。我们让nginx监听一个端口，譬如80端口，但实际上我们转发给在8080端口的tomcat，由它来处理真正的请求，当请求完成后，tomcat返回，但数据此时没直接返回，而是直接给nginx，由nginx进行返回，这里，我们会以为是nginx进行了处理，但实际上进行处理的是tomcat。
  说到上面的方式，也许很多人又会想起来，这样可以把静态文件交由nginx来进行处理。对，很多用到nginx的地方都是作为静态伺服器，这样可以方便缓存那些静态文件，比如CSS，JS，html，htm等文件。
+
 # 了解nginx配置项
+
 **[your_nginx_path]\conf\nginx.conf**
+
 ```
 server {
         listen       80;
@@ -40,6 +43,7 @@ server {
         #}
     }
 ```
+
 这里面有几个需要了解的地方：
 * listen：表示当前的代理服务器监听的端口，默认的是监听80端口。注意，如果我们配置了多个server，这个listen要配置不一样，不然就不能确定转到哪里去了。
 * server_name：表示监听到之后需要转到哪里去，这时我们直接转到本地，这时是直接到nginx文件夹内。
@@ -49,17 +53,22 @@ server {
 * error_page是代表错误的页面。
 
 # 配置实现
+
 这里我们用nginx实现对tomcat的真实请求，也就是来自于所有来自外部的请求，进入nginx的８０端口进行监听，如果静态文件(js,css,image等等)，由nginx直接返回，如果是别的请求将由tomcat响应，tomcat只对nginx可见．
+
 ## 软件准备
+
 [nssm-2.24.zip](http://nssm.cc/release/nssm-2.24.zip)
 [nginx-1.11.1.zip windows版本](http://220.112.193.202/files/51980000019FAC95/nginx.org/download/nginx-1.11.1.zip) 
 
 ## 加入到环境变量
+
 path=F:\server\nssm-2.24\win64;F:\server\nginx-1.11.1;
 
 准备一个nginx配置文件，静态文件由nginx直接处理，动态文件由8080端口处理
 
 **F:\server\for-tomcat-nginx.conf**
+
 ```
 #user  nobody;
 worker_processes  1;
@@ -121,6 +130,7 @@ http {
 ```
 
 ##配置
+
 命令行
 `nssm install`
 会弹出下面的配置界面:
@@ -128,6 +138,7 @@ http {
 ![Paste_Image.png](http://upload-images.jianshu.io/upload_images/2026576-cf7edd4d2681e6b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ##开始服务
+
 `nssm start test-nginx`
 同时在开启你的tomcat服务器
 
@@ -139,6 +150,7 @@ http {
 ![Paste_Image.png](http://upload-images.jianshu.io/upload_images/2026576-f8c5beea2a8d8ed4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 #本文件的demo文件
+
 spring boot+web
 **test-nginx\src\resources\templates\application.properties**
 ```
